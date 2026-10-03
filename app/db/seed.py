@@ -2,6 +2,9 @@
 import asyncio
 from app.db.database import init_db, AsyncSessionLocal
 from app.services import drex_service
+from app.models.models import BcbUser
+from app.core.security import hash_password
+from sqlalchemy import select
 
 
 INSTITUTIONS = [
@@ -22,6 +25,19 @@ INDIVIDUALS = [
 async def seed():
     await init_db()
     async with AsyncSessionLocal() as db:
+
+        # Usuário BCB inicial
+        existing = await db.execute(select(BcbUser).where(BcbUser.username == "admin_bcb"))
+        if not existing.scalar_one_or_none():
+            user = BcbUser(
+                username="admin_bcb",
+                full_name="Administrador Banco Central",
+                hashed_password=hash_password("drex@2024"),
+            )
+            db.add(user)
+            await db.commit()
+            print("  Usuário BCB criado: admin_bcb / drex@2024")
+
         accounts = {}
         for name, is_inst in INSTITUTIONS + INDIVIDUALS:
             acc = await drex_service.create_account(db, name, is_inst)

@@ -6,6 +6,17 @@ from app.db.database import Base
 import enum
 
 
+class BcbUser(Base):
+    __tablename__ = "bcb_users"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    username: Mapped[str] = mapped_column(String(50), unique=True, index=True)
+    full_name: Mapped[str] = mapped_column(String(100))
+    hashed_password: Mapped[str] = mapped_column(String(255))
+    active: Mapped[bool] = mapped_column(Boolean, default=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+
 class TransactionType(str, enum.Enum):
     MINT = "MINT"
     BURN = "BURN"

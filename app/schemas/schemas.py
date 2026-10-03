@@ -4,6 +4,45 @@ from typing import Optional
 from app.models.models import TransactionType
 
 
+class BcbUserCreate(BaseModel):
+    username: str = Field(
+        ...,
+        min_length=3,
+        max_length=50,
+        description="Nome de usuário único para acesso ao painel do Banco Central. Use apenas letras, números e underscores.",
+        examples=["analista_bcb"],
+    )
+    full_name: str = Field(
+        ...,
+        min_length=3,
+        max_length=100,
+        description="Nome completo do funcionário do Banco Central.",
+        examples=["Ana Paula Ferreira"],
+    )
+    password: str = Field(
+        ...,
+        min_length=6,
+        description="Senha de acesso. Mínimo de 6 caracteres. Será armazenada com hash bcrypt.",
+        examples=["senha_segura_123"],
+    )
+
+
+class BcbUserResponse(BaseModel):
+    id: str = Field(description="Identificador interno do usuário (UUID).")
+    username: str = Field(description="Nome de usuário.")
+    full_name: str = Field(description="Nome completo.")
+    active: bool = Field(description="Indica se o usuário está ativo.")
+    created_at: datetime = Field(description="Data de criação do usuário.")
+
+    model_config = {"from_attributes": True}
+
+
+class TokenResponse(BaseModel):
+    access_token: str = Field(description="Token JWT para uso no cabeçalho `Authorization: Bearer <token>`.")
+    token_type: str = Field(default="bearer", description="Tipo do token. Sempre `bearer`.")
+    expires_in_minutes: int = Field(description="Tempo de expiração do token em minutos.")
+
+
 class AccountCreate(BaseModel):
     name: str = Field(
         ...,

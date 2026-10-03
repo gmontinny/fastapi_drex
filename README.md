@@ -1,4 +1,4 @@
-# 🪙 Drex Simulator
+﻿# 🪙 Drex Simulator
 
 > Simulador acadêmico do **Drex** — a Moeda Digital Brasileira (CBDC) do Banco Central do Brasil.  
 > Construído com **Python**, **FastAPI**, **PostgreSQL** e princípios de **blockchain** para fins educacionais.
@@ -739,3 +739,4 @@ O artigo cobre:
 
 > Projeto desenvolvido para fins **acadêmicos e educacionais**.  
 > Não representa a implementação real do Drex pelo Banco Central do Brasil.
+

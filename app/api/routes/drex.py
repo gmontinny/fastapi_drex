@@ -16,9 +16,8 @@ router = APIRouter(prefix="/drex", tags=["💸 Operações Drex"])
     description="""
 Emite (cria) uma quantidade de Drex e deposita na conta indicada.
 
-> 🔒 **Operação restrita ao Banco Central.** Envie o cabeçalho `X-Bcb-Key: bcb-master-key-simulacao`.
-
-Esta operação representa a **emissão monetária**: o BCB cria Drex do zero e distribui para instituições financeiras (camada atacado).
+> 🔒 **Operação restrita ao Banco Central.** Você precisa estar autenticado com um token JWT válido.
+> Caso ainda não tenha um token: registre um usuário em `POST /auth/registrar`, faça login em `POST /auth/login` e clique em **🔓 Authorize** no topo desta página.: o BCB cria Drex do zero e distribui para instituições financeiras (camada atacado).
 
 **Regras:**
 - A conta destinatária deve existir.
@@ -43,7 +42,8 @@ async def mint(payload: MintRequest, db: AsyncSession = Depends(get_db)):
     description="""
 Destrói uma quantidade de Drex de uma conta, reduzindo a oferta monetária total em circulação.
 
-> 🔒 **Operação restrita ao Banco Central.** Envie o cabeçalho `X-Bcb-Key: bcb-master-key-simulacao`.
+> 🔒 **Operação restrita ao Banco Central.** Você precisa estar autenticado com um token JWT válido.
+> Caso ainda não tenha um token: registre um usuário em `POST /auth/registrar`, faça login em `POST /auth/login` e clique em **🔓 Authorize** no topo desta página.
 
 A **queima** é o oposto da emissão: o BCB remove Drex de circulação para controlar a oferta monetária, similar ao que bancos centrais fazem com cédulas físicas.
 
@@ -93,7 +93,8 @@ async def transfer(payload: TransferRequest, db: AsyncSession = Depends(get_db))
     description="""
 Bloqueia ou desbloqueia uma conta, impedindo que ela envie ou receba Drex.
 
-> 🔒 **Operação restrita ao Banco Central.** Envie o cabeçalho `X-Bcb-Key: bcb-master-key-simulacao`.
+> 🔒 **Operação restrita ao Banco Central.** Você precisa estar autenticado com um token JWT válido.
+> Caso ainda não tenha um token: registre um usuário em `POST /auth/registrar`, faça login em `POST /auth/login` e clique em **🔓 Authorize** no topo desta página.
 
 O **congelamento** é um mecanismo de **controle regulatório**: o BCB pode bloquear contas suspeitas de fraude, lavagem de dinheiro ou outras irregularidades.
 

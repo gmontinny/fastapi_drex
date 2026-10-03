@@ -1,7 +1,8 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
+from fastapi.security import OAuth2PasswordBearer
 from app.db.database import init_db
-from app.api.routes import accounts, drex, blockchain
+from app.api.routes import accounts, drex, blockchain, auth
 
 
 @asynccontextmanager
@@ -26,26 +27,35 @@ Ao contrário do Pix (que movimenta reais tradicionais), o Drex é uma represent
 
 ### ⚙️ Como funciona este simulador?
 
-O sistema possui **três grupos de funcionalidades**:
+O sistema possui **quatro grupos de funcionalidades**:
 
 | Grupo | O que faz |
 |---|---|
+| 🔐 **Autenticação BCB** | Registra usuários e gera tokens JWT para o Banco Central |
 | 🧑 **Contas** | Cria e consulta contas de bancos e pessoas |
 | 💸 **Operações Drex** | Emite, queima, transfere e congela saldo |
 | 🔗 **Blockchain** | Consulta o histórico de blocos e transações |
 
 ---
 
-### 🔒 Operações restritas ao Banco Central
+### 🔒 Como acessar as operações restritas ao Banco Central
 
-Algumas operações só podem ser feitas pelo **Banco Central**.
-Para isso, envie o seguinte cabeçalho HTTP em sua requisição:
+As operações de **mint**, **burn** e **freeze** exigem autenticação JWT. Siga os passos:
 
+**1️⃣ Registre um usuário do BCB**
 ```
-X-Bcb-Key: bcb-master-key-simulacao
+POST /auth/registrar
 ```
 
-Sem esse cabeçalho, a API retorna **403 Forbidden**.
+**2️⃣ Faça login para obter o token**
+```
+POST /auth/login
+```
+
+**3️⃣ Clique em 🔓 Authorize** (botão no topo desta página),
+cole o token no campo **Value** e clique em **Authorize**.
+
+Pronto! As operações restritas estarão disponíveis por **60 minutos**.
 
 ---
 
@@ -75,15 +85,12 @@ app = FastAPI(
     title="🪙 Drex Simulator — Moeda Digital Brasileira",
     description=DESCRICAO,
     version="1.0.0",
-    contact={
-        "name": "Projeto Acadêmico — Drex Simulator",
-    },
-    license_info={
-        "name": "Uso Acadêmico",
-    },
+    contact={"name": "Projeto Acadêmico — Drex Simulator"},
+    license_info={"name": "Uso Acadêmico"},
     lifespan=lifespan,
 )
 
+app.include_router(auth.router)
 app.include_router(accounts.router)
 app.include_router(drex.router)
 app.include_router(blockchain.router)
